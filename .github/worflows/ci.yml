@@ -1,6 +1,6 @@
 name: Cypress advanced Tests
 
-on: [push]
+on: push
 
 jobs:
   cypress-run:
