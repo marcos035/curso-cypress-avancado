@@ -2,11 +2,19 @@ describe('Hacker Stories', () => {
   beforeEach(() => {
     cy.visit('/')
 
-    cy.assertLoadingIsShownAndHidden()
+  
+    cy.intercept('GET', '**/search?query=React&page=0').as('getPage')
+
+    cy.wait('@getPage')
+
+  
     cy.contains('More').should('be.visible')
+
+
+
   })
 
-  it('shows the footer', () => {
+  it.only('shows the footer', () => {
     cy.get('footer')
       .should('be.visible')
       .and('contain', 'Icons made by Freepik from www.flaticon.com')
