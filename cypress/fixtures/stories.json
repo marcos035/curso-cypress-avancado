@@ -1,0 +1,33 @@
+{
+
+"hits":[
+    {
+        "title": "sample 1",
+        "url": "https://example.com/1",
+        "author": "Marcos 1",
+        "num_comments": 34,
+        "points": 91,
+        "objectID": 0
+    },
+    {
+        "title": "sample 2",
+        "url": "https://example.com/1",
+        "author": "Marcos 2",
+        "num_comments": 33,
+        "points": 91,
+        "objectID": 1
+
+    }
+    ,
+    {
+        "title": "sample 3",
+        "url": "https://example.com/1",
+        "author": "Marcos 3",
+        "num_comments": 333,
+        "points": 561,
+        "objectID": 4
+
+    }
+]
+
+}
