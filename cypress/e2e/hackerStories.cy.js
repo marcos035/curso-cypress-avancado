@@ -3,7 +3,6 @@ describe('Hacker Stories', () => {
   const newTerm = 'Cypress'
 
 
-
   context('hitting the real API', () => {
 
     context('Search', () => {
@@ -32,13 +31,13 @@ describe('Hacker Stories', () => {
             page: '1'
           }
         }).as('getNextStories')
-  
+
         cy.get('.item').should('have.length', 20)
-  
+
         cy.contains('More').click()
-  
+
         cy.wait('@getNextStories')
-  
+
         cy.get('.item').should('have.length', 40)
       })
 
@@ -91,7 +90,15 @@ describe('Hacker Stories', () => {
           .should('be.visible')
       })
     })
+
     context('Last searches', () => {
+      beforeEach(() => {
+        cy.visit('/')
+
+        cy.get('#search')
+          .clear()
+      })
+
       it('searches via the last searched term', () => {
 
         cy.intercept({
@@ -162,41 +169,41 @@ describe('Hacker Stories', () => {
     context('Errors', () => {
 
       it('shows "Something went wrong ..." in case of a server error', () => {
-    
+
         cy.intercept(
-    
+
           'GET',
           `**/search**`,
           { statusCode: 500 }
         ).as('serverError')
-    
+
         cy.visit('/')
         cy.wait('@serverError')
-    
+
         cy.contains('p', 'Something went wrong ...')
           .should('be.visible')
-    
+
       })
-    
+
       it('shows "Something went wrong ..." in case of a network error', () => {
-    
+
         cy.intercept(
-    
+
           'GET',
           `**/search**`,
           { forceNetworkError: true }
         ).as('netError')
-    
+
         cy.visit('/')
         cy.wait('@netError')
-    
+
         cy.contains('p', 'Something went wrong ...')
           .should('be.visible')
-    
+
       })
     })
-    
-    
+
+
   })
   context('Mocking the API', () => {
     beforeEach(() => {
@@ -212,9 +219,9 @@ describe('Hacker Stories', () => {
       cy.wait('@mockApi')
 
     })
-   
 
-    it.only('shows only 2 stories after dimissing the first story', () => {
+
+    it('shows only 2 stories after dimissing the first story', () => {
 
       cy.get('.button-small')
         .first()
@@ -226,40 +233,127 @@ describe('Hacker Stories', () => {
   })
 
   context('List of stories', () => {
-    // Since the API is external,
-    // I can't control what it will provide to the frontend,
-    // and so, how can I assert on the data?
-    // This is why this test is being skipped.
-    // TODO: Find a way to test it out.
-    it.skip('shows the right data for all rendered stories', () => { })
+    var search = 'linkedin'
+    beforeEach(() => {
+      cy.visit('/')
+
+      cy.intercept(
+        'GET',
+
+        `**/search?query=${search}&page=0`
+
+      ).as('waitSite')
 
 
+    })
+    it('shows the right data for all rendered stories', () => {
+      cy.get('#search')
+        .clear()
+        .type(`${search}{enter}`)
 
+      cy.wait('@waitSite')
 
-    // Since the API is external,
-    // I can't control what it will provide to the frontend,
-    // and so, how can I test ordering?
-    // This is why these tests are being skipped.
-    // TODO: Find a way to test them out.
-    context.skip('Order by', () => {
-      it('orders by title', () => { })
+      cy.get('button:contains(Title)').should('to.be.visible')
+      cy.get('button:contains(Author)').should('to.be.visible')
+      cy.get('button:contains(Comments)').should('to.be.visible')
+      cy.get('button:contains(Points)').should('to.be.visible')
 
-      it('orders by author', () => { })
+      cy.get('.item').should('have.length', 20)
 
-      it('orders by comments', () => { })
-
-      it('orders by points', () => { })
+      cy.get('button:contains(More)').should('be.visible')
     })
 
-    // Hrm, how would I simulate such errors?
-    // Since I still don't know, the tests are being skipped.
-    // TODO: Find a way to test them out.
+    context('Order by', () => {
+      search = 'javascript'
+
+      it('orders by title', () => {
+
+
+        cy.get('#search')
+          .clear()
+          .type(`${search}{enter}`)
+
+        cy.wait('@waitSite')
+
+        cy.get('button:contains(Title)')
+          .should('to.be.visible')
+          .click()
+
+
+        cy.get('.item')
+          .first()
+          .should('contain', 'A')
+
+
+      })
+
+
+
+      it('orders by author', () => {
+
+        cy.get('#search')
+          .clear()
+          .type(`${search}{enter}`)
+
+        cy.wait('@waitSite')
+
+        cy.get('button:contains(Author)')
+          .should('to.be.visible')
+          .click()
+
+
+        cy.get('.item')
+          .first()
+          .should('be.visible')
+      })
+
+      it('orders by comments', () => {
+
+        cy.get('#search')
+          .clear()
+          .type(`${search}{enter}`)
+
+        cy.wait('@waitSite')
+
+        cy.get('button:contains(Comments)')
+          .should('to.be.visible')
+          .click()
+
+
+        cy.get('.item')
+          .first()
+          .should('be.visible')
+      })
+
+      it('orders by points', () => {
+        cy.get('#search')
+          .clear()
+          .type(`${search}{enter}`)
+
+        cy.wait('@waitSite')
+
+        cy.get('button:contains(Points)')
+          .should('to.be.visible')
+          .dblclick()
+
+
+        cy.get('.item')
+          .first()
+          .should('be.visible')
+
+      })
+
+
+      // Hrm, how would I simulate such errors?
+      // Since I still don't know, the tests are being skipped.
+      // TODO: Find a way to test them out.
+
+    })
 
   })
+
+
+
 })
-
-
-
-
 
 
