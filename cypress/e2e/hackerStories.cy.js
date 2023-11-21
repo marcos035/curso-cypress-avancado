@@ -10,6 +10,8 @@ describe('Hacker Stories', () => {
       beforeEach(() => {
         cy.visit('/')
 
+      
+
         cy.get('#search')
           .clear()
       })
@@ -99,7 +101,7 @@ describe('Hacker Stories', () => {
           .clear()
       })
 
-      it('searches via the last searched term', () => {
+      it.only('searches via the last searched term', () => {
 
         cy.intercept({
           method: 'GET',
@@ -124,11 +126,17 @@ describe('Hacker Stories', () => {
 
         cy.wait('@search')
 
+        cy.getLocalStorage('search')
+        .should('be.eql', newTerm)
+
         cy.get(`button:contains(${initialTerm})`)
           .should('be.visible')
           .click()
 
         cy.wait('@lastSearch')
+
+        cy.getLocalStorage('search')
+        .should('be.eql', initialTerm)
 
         cy.get('.item').should('have.length', 20)
         cy.get('.item')
@@ -162,7 +170,12 @@ describe('Hacker Stories', () => {
 
 
         cy.get('.last-searches button')
+        .within(()=>{
+          cy.get('button')
           .should('have.length', 5)
+
+        })
+          
       })
     })
 
