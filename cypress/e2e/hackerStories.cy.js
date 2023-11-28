@@ -276,6 +276,7 @@ describe('Hacker Stories', () => {
       cy.get('button:contains(More)').should('be.visible')
     })
 
+
     context('Order by', () => {
       search = 'javascript'
 
@@ -364,7 +365,23 @@ describe('Hacker Stories', () => {
     })
 
   })
+  it.only('shows a "Loading ..." state before showing the results',()=>{
 
+    cy.intercept(
+      'GET',
+      `**/search?query=React&page=0`,
+      {
+        delay: 1000, 
+        fixture:'stories'
+      }
+    ).as('getDelayedStories')
+
+    cy.visit('/')
+
+    cy.wait('@getDelayedStories')
+
+    cy.get('.item').should('have.length', 3)
+  })
 
 
 })
